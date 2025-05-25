@@ -1,5 +1,8 @@
 # 256avatars
 
+Used in:
+* [minimal forum](https://github.com/KrzysztofMarciniak/minimal-forum)
+
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 
 A Go library for generating pixel-art style avatars. Provides functionality to create random and symmetric avatars, save and delete PNG files, and generate HTML tags for easy integration in web applications.
@@ -25,34 +28,39 @@ go get github.com/krzysztofmarciniak/256avatars
 package main
 
 import (
-    "fmt"
-    "log"
+	"fmt"
+	"log"
 
-    "github.com/krzysztofmarciniak/256avatars"
+	"github.com/krzysztofmarciniak/256avatars/avatarlib"
 )
 
 func main() {
-    // Generate a 64x64 random avatar
-    avatar, err := avatarlib.GenerateAvatar(64, 64)
-    if err != nil {
-        log.Fatalf("failed to generate avatar: %v", err)
-    }
+	folder := "./avatars"
+	key := "user123"
+	width, height := 256, 256
 
-    // Render as PNG
-    pngData, err := avatarlib.RenderPNG(avatar)
-    if err != nil {
-        log.Fatalf("failed to render PNG: %v", err)
-    }
+	ka, err := avatarlib.GenerateKeyAvatar(key, width, height)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    // Save to disk
-    keyAvatar, _ := avatarlib.GenerateKeyAvatar("user123", 64, 64)
-    if err := avatarlib.SaveAvatar("./avatars", keyAvatar); err != nil {
-        log.Fatalf("failed to save avatar: %v", err)
-    }
+	err = avatarlib.SaveAvatar(folder, ka)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    // Output HTML tag
-    html := avatarlib.GetAvatarHTML("/avatars/", "user123", 64, 64)
-    fmt.Println(html)
+	path := avatarlib.GetAvatarPath(folder, key)
+	fmt.Println("Avatar saved to:", path)
+
+	imgTag := avatarlib.GetAvatarHTML("/avatars/", key, width, height)
+	fmt.Println("HTML tag:", imgTag)
+
+    // Uncomment the following lines to delete the avatar
+
+	// err = avatarlib.DeleteAvatar(folder, key)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 }
 ```
 
