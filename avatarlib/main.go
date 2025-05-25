@@ -108,8 +108,19 @@ type KeyAvatar struct {
 
 // GenerateKeyAvatar creates a random Avatar and wraps it with the provided key.
 // Delegates to GenerateAvatar and returns an error on failure.
-func GenerateKeyAvatar(key string, width, height int) (*KeyAvatar, error) {
-	avatar, err := GenerateAvatar(width, height)
+func GenerateKeyAvatar(key string, width, height int, method string) (*KeyAvatar, error) {
+	var avatar *Avatar
+	var err error
+
+	switch method {
+	case "symmetric":
+		avatar, err = GenerateSymmetric(width, height)
+	case "none", "":
+		fallthrough
+	default:
+		avatar, err = GenerateAvatar(width, height)
+	}
+
 	if err != nil {
 		return nil, err
 	}
