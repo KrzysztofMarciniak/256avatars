@@ -39,6 +39,7 @@ func main() {
 	key := "user123"
 	keysym := "user1234"
 	width, height := 256, 256
+	scale := 4
 
 	ka, err := avatarlib.GenerateKeyAvatar(key, width, height)
 	if err != nil {
@@ -48,12 +49,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = avatarlib.SaveAvatar(folder, ksa)
+
+	err = avatarlib.SaveAvatar(folder, ksa, scale)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = avatarlib.SaveAvatar(folder, ka)
+	err = avatarlib.SaveAvatar(folder, ka, scale)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,13 +64,12 @@ func main() {
 	sympath := avatarlib.GetAvatarPath(folder, keysym)
 	fmt.Println("Symmetric avatar saved to:", sympath)
 
-	imgTag := avatarlib.GetAvatarHTML("/avatars/", key, width, height)
+	imgTag := avatarlib.GetAvatarHTML("/avatars/", key, width*scale, height*scale)
 	fmt.Println("HTML tag:", imgTag)
-	imgTagSym := avatarlib.GetAvatarHTML("/avatars/", keysym, width, height)
+	imgTagSym := avatarlib.GetAvatarHTML("/avatars/", keysym, width*scale, height*scale)
 	fmt.Println("Symmetric HTML tag:", imgTagSym)
-	
+
 	// Delete avatar files
-	
 	// err = avatarlib.DeleteAvatar(folder, keysym)
 	// if err != nil {
 	// 	log.Fatal(err)
