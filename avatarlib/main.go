@@ -127,8 +127,8 @@ func GenerateKeySymmetricAvatar(key string, width, height int) (*KeyAvatar, erro
 
 // SaveAvatar renders the KeyAvatar as a PNG and writes it to folder/<key>.png.
 // Creates the folder if it does not exist.
-func SaveAvatar(folder string, ka *KeyAvatar) error {
-	pngData, err := RenderPNG(ka.Avatar)
+func SaveAvatar(folder string, ka *KeyAvatar, scale int) error {
+	pngData, err := RenderPNG(ka.Avatar, scale)
 	if err != nil {
 		return err
 	}
@@ -160,19 +160,26 @@ func DeleteAvatar(folder, key string) error {
 
 // RenderPNG encodes the Avatar into a grayscale PNG image.
 // Set pixels (true) map to white and unset pixels (false) map to black.
-func RenderPNG(a *Avatar) ([]byte, error) {
-	img := image.NewGray(image.Rect(0, 0, a.Width, a.Height))
-
+// Scale parameter determines the size multiplier for the output image.
+// For example, if the Avatar is 16x16 and scale is 4, the output will be 64x64.
+func RenderPNG(a *Avatar, scale int) ([]byte, error) {
+	if scale <= 0 {
+		return nil, errors.New("scale must be positive")
+	}
+	img := image.NewGray(image.Rect(0, 0, a.Width*scale, a.Height*scale))
 	for y := 0; y < a.Height; y++ {
 		for x := 0; x < a.Width; x++ {
-			if a.GetPixel(x, y) {
-				img.SetGray(x, y, color.Gray{Y: 255})
-			} else {
-				img.SetGray(x, y, color.Gray{Y: 0})
+			for sy := 0; sy < scale; sy++ {
+				for sx := 0; sx < scale; sx++ {
+					if a.GetPixel(x, y) {
+						img.SetGray(x*scale+sx, y*scale+sy, color.Gray{Y: 255})
+					} else {
+						img.SetGray(x*scale+sx, y*scale+sy, color.Gray{Y: 0})
+					}
+				}
 			}
 		}
 	}
-
 	buf := &bytes.Buffer{}
 	if err := png.Encode(buf, img); err != nil {
 		return nil, err
