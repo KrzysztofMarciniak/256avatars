@@ -37,26 +37,43 @@ import (
 func main() {
 	folder := "./avatars"
 	key := "user123"
+	keysym := "user1234"
 	width, height := 256, 256
-	scale := 4
 
 	ka, err := avatarlib.GenerateKeyAvatar(key, width, height)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	err = avatarlib.SaveAvatar(folder, ka, scale)
+	ksa, err := avatarlib.GenerateKeySymmetricAvatar(keysym, width, height)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = avatarlib.SaveAvatar(folder, ksa)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = avatarlib.SaveAvatar(folder, ka)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	path := avatarlib.GetAvatarPath(folder, key)
 	fmt.Println("Avatar saved to:", path)
+	sympath := avatarlib.GetAvatarPath(folder, keysym)
+	fmt.Println("Symmetric avatar saved to:", sympath)
 
-	imgTag := avatarlib.GetAvatarHTML("/avatars/", key, width*scale, height*scale)
+	imgTag := avatarlib.GetAvatarHTML("/avatars/", key, width, height)
 	fmt.Println("HTML tag:", imgTag)
-
-	// Uncomment the following lines to delete the avatar file:
+	imgTagSym := avatarlib.GetAvatarHTML("/avatars/", keysym, width, height)
+	fmt.Println("Symmetric HTML tag:", imgTagSym)
+	
+	// Delete avatar files
+	
+	// err = avatarlib.DeleteAvatar(folder, keysym)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	// err = avatarlib.DeleteAvatar(folder, key)
 	// if err != nil {
 	// 	log.Fatal(err)
