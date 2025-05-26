@@ -89,6 +89,10 @@ Methods:
 
 Creates an avatar wrapped in a `KeyAvatar` with the given key.
 
+### `GenerateKeySymmetricAvatar(key string, width, height int) (*KeyAvatar, error)`
+
+Creates an symmetric avatar wrapped in a `KeyAvatar` with the given key.
+
 ### `SaveAvatar(folder string, ka *KeyAvatar) error`
 
 Saves the avatar PNG to `folder/<key>.png`, creating the folder if necessary.
